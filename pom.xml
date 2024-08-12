@@ -45,6 +45,11 @@
             <version>1.18.34</version>
             <scope>provided</scope>
         </dependency>
+        <!-- client rest-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
         <!--manage jackson-->
         <dependency>
             <groupId>io.quarkus</groupId>

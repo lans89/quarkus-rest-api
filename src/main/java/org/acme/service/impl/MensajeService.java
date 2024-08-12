@@ -1,20 +1,19 @@
-package org.acme.service;
+package org.acme.service.impl;
 
 import io.quarkus.cache.CacheResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.acme.repository.MensajeRepository;
+import org.acme.service.IMensajeService;
 import org.acme.utils.valids.ErrorMensaje;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Singleton
-@Named("mensaje-service")
+@Named("mensajeService")
 @Slf4j
-public class MensajeService implements IMensajeService{
+public class MensajeService implements IMensajeService {
 
     @Inject
     private MensajeRepository mensajeRepository;

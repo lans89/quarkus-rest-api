@@ -1,26 +1,23 @@
-package org.acme.service;
+package org.acme.service.impl;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.acme.dto.response.CanalDTO;
 import org.acme.dto.response.ResultadoDTO;
 import org.acme.repository.CanalRepository;
+import org.acme.service.ICanalService;
 import org.acme.utils.MappingUtils;
 import org.acme.utils.Respuestas;
-import org.acme.utils.valids.ErrorMensaje;
 import org.acme.utils.valids.ValidCanal;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.acme.utils.valids.CodigoMensajes.ERROR_EXCEPTION;
 
-@Singleton
-@Named("canal-service")
+@Named("canalService")
 @Slf4j
 public class CanalService implements ICanalService {
 

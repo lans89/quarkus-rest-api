@@ -4,7 +4,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.acme.service.IMensajeService;
-import org.acme.service.MensajeService;
 import org.acme.utils.valids.ErrorMensaje;
 
 import java.util.LinkedList;
@@ -13,8 +12,9 @@ import java.util.Map;
 
 @Singleton
 public class Respuestas {
+
     @Inject
-    @Named("mensaje-service")
+    @Named("mensajeService")
     private IMensajeService mensajeService;
 
     public List<ErrorMensaje> armarListaErrores(List<String> codigos, String idioma){

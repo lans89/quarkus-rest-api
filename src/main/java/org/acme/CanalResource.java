@@ -14,7 +14,7 @@ import java.util.List;
 public class CanalResource {
 
     @Inject
-    @Named("canal-service")
+    @Named("canalService")
     private ICanalService canalService;
 
     @GET
