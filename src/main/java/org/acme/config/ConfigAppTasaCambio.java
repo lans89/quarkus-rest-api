@@ -1,4 +1,4 @@
-package org.acme;
+package org.acme.config;
 
 import io.smallrye.config.ConfigMapping;
 

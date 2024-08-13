@@ -3,7 +3,7 @@ package org.acme.service.impl;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
-import org.acme.ConfigAppTasaCambio;
+import org.acme.config.ConfigAppTasaCambio;
 import org.acme.client.ApiCurrencyClient;
 import org.acme.dto.request.ConsultaTasaCambioDTO;
 import org.acme.dto.response.CambioDTO;
