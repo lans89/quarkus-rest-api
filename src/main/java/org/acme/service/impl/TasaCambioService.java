@@ -3,6 +3,7 @@ package org.acme.service.impl;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
+import org.acme.ConfigAppTasaCambio;
 import org.acme.client.ApiCurrencyClient;
 import org.acme.dto.request.ConsultaTasaCambioDTO;
 import org.acme.dto.response.CambioDTO;
@@ -14,6 +15,8 @@ import org.acme.repository.MonedaRepository;
 import org.acme.service.ITasaCambioService;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -29,6 +32,8 @@ public class TasaCambioService implements ITasaCambioService {
     CambioRepository cambioRepository;
     @Inject
     MonedaRepository monedaRepository;
+    @Inject
+    ConfigAppTasaCambio configAppTasaCambio;
 
 
     private Optional<CambioDTO> convertir(Cambio cambioDB, Moneda monedaDe, Moneda monedaA) {
@@ -53,14 +58,20 @@ public class TasaCambioService implements ITasaCambioService {
     }
 
     private Optional<Cambio> obtenerTasaCambioApi(String deMoneda, String aMoneda, LocalDate fecha) {
-        RestApiCurrencyResponse response = apiCurrencyClient.getCurrencyConverter(deMoneda, aMoneda, fecha.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        RestApiCurrencyResponse response = apiCurrencyClient.getCurrencyConverter(
+                deMoneda, aMoneda,
+                fecha.format(DateTimeFormatter.ofPattern(configAppTasaCambio.formatDate())));
         if (Objects.isNull(response))
             return Optional.empty();
+        BigDecimal exchangeSell = response.getData().get(aMoneda).getValue();
+        BigDecimal exchangeBuy = response.getData().get(aMoneda).getValue();
+        exchangeSell = exchangeSell.setScale(configAppTasaCambio.decimalsPlace(), RoundingMode.HALF_UP);
+        exchangeBuy = exchangeBuy.setScale(configAppTasaCambio.decimalsPlace(), RoundingMode.HALF_UP);
         return Optional.of(Cambio.builder()
                 .monedaOrigen(deMoneda)
                 .monedaDestino(aMoneda)
-                .tasaCambioVenta(response.getData().get(aMoneda).getValue())
-                .tasaCambioCompra(response.getData().get(aMoneda).getValue())
+                .tasaCambioVenta(exchangeSell)
+                .tasaCambioCompra(exchangeBuy)
                 .fecha(fecha).build());
     }
 
@@ -85,7 +96,10 @@ public class TasaCambioService implements ITasaCambioService {
                 return Optional.empty();
             }
             log.info("Monedas no son iguales!");
-            LocalDate fecha = request.getFecha() == null ? LocalDate.now() : LocalDate.parse(request.getFecha(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(configAppTasaCambio.formatDate());
+            LocalDate fecha = LocalDate.parse(Optional.ofNullable(request.getFecha())
+                            .orElse(LocalDate.now().format(formatter)),
+                    formatter);
             log.info("fecha {}", fecha);
             Optional<Cambio> cambio = this.obtenerTasaCambioDB(monedaDe.get().getId(), monedaA.get().getId(), fecha);
             log.info("validaciones");
